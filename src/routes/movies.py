@@ -14,16 +14,21 @@ async def get_movies(
     per_page: int = Query(10, ge=1, le=20),
     db: AsyncSession = Depends(get_db),
 ):
-    offset = (page - 1) * per_page
-    result = await db.execute(select(MovieModel).offset(offset).limit(per_page))
-    movies = result.scalars().all()
-
-    if not movies:
-        raise HTTPException(status_code=404, detail="No movies found.")
-
     count_result = await db.execute(select(func.count(MovieModel.id)))
     total_items = count_result.scalar_one()
+
+    if total_items == 0:
+        raise HTTPException(status_code=404, detail="No movies found.")
+
     total_pages = (total_items + per_page - 1) // per_page
+    offset = (page - 1) * per_page
+    if page > total_pages:
+        raise HTTPException(status_code=404, detail="No movies found.")
+
+    result = await db.execute(
+        select(MovieModel).order_by(MovieModel.id).offset(offset).limit(per_page)
+    )
+    movies = result.scalars().all()
 
     prev_page = (
         None if page <= 1 else f"/theater/movies/?page={page - 1}&per_page={per_page}"

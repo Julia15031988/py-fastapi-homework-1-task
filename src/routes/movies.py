@@ -7,6 +7,7 @@ from database import get_db, MovieModel
 
 router = APIRouter()
 
+
 @router.get("/movies/", response_model=MovieListResponseSchema)
 async def get_movies(
     page: int = Query(1, ge=1),
@@ -35,6 +36,7 @@ async def get_movies(
         total_items=total_items
     )
 
+
 @router.get("/movies/{movie_id}/", response_model=MovieDetailResponseSchema)
 async def get_movie_by_id(movie_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(MovieModel).where(MovieModel.id == movie_id))
@@ -44,4 +46,3 @@ async def get_movie_by_id(movie_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Movie with the given ID was not found.")
 
     return movie
-

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic import conint
-from typing import List,Optional
+from typing import List, Optional
 from datetime import date
 
 
@@ -20,7 +20,6 @@ class MovieDetailResponseSchema(BaseModel):
     country: str
 
     model_config = ConfigDict(from_attributes=True)
-
 
 class MovieListResponseSchema(BaseModel):
     movies: List[MovieDetailResponseSchema]

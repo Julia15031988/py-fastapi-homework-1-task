@@ -1,5 +1,6 @@
-from pydantic import BaseModel
-from typing import List, Optional
+from pydantic import BaseModel, ConfigDict
+from pydantic import conint
+from typing import List,Optional
 from datetime import date
 
 
@@ -7,7 +8,7 @@ class MovieDetailResponseSchema(BaseModel):
     id: int
     name: str
     date: date
-    score: float
+    score: conint(ge=0, le=100)
     genre: str
     overview: str
     crew: str
@@ -18,13 +19,12 @@ class MovieDetailResponseSchema(BaseModel):
     revenue: float
     country: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MovieListResponseSchema(BaseModel):
     movies: List[MovieDetailResponseSchema]
-    prev_page: Optional[str]
-    next_page: Optional[str]
+    prev_page: Optional[str] = None
+    next_page: Optional[str] = None
     total_pages: int
     total_items: int
